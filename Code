@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+	int maximum[10][10], need[10][10], allocation[10][10], available[10], completed[10], SafeSequence[10];
+	int i, j, x, y, process, ct=0;
+
+	printf("Enter the no of processes : ");
+	scanf("%d", &x);
+	for(i = 0; i< x; i++)
+	{
+		completed[i] = 0;
+	}
+
+	printf("\n\nEnter the no of resources : "); 
+	scanf("%d", &y);
+
+	printf("\n\nEnter the Maximum Matrix for each process : ");
+	for(i = 0; i < x; i++)
+	{
+		printf("\nFor process %d : ", i + 1);
+		for(j = 0; j < y; j++)
+		scanf("%d", &maximum[i][j]);
+	}
+
+	printf("\n\nEnter the Allocation for each process : ");
+	for(i = 0; i < x; i++)
+	{
+		printf("\nFor process %d : ",i + 1);
+		for(j = 0; j < y; j++)
+		scanf("%d", &allocation[i][j]); 
+	}
+
+	printf("\n\nEnter the Available Resources : ");
+	for(i = 0; i < y; i++)
+		scanf("%d", &available[i]);   
+	for(i = 0; i < x; i++)
+		for(j = 0; j < y; j++)
+			need[i][j] = maximum[i][j] - allocation[i][j];
+
+	do
+	{
+		printf("\n Maximum Matrix:\tAllocation matrix:\n");     // Printing Maximum Matrix and Allocation Matrix
+		for(i = 0; i < x; i++)
+		{
+			for( j = 0; j < y; j++)
+				printf("%d ", maximum[i][j]);                   // Maximum Matrix
+
+		printf("\t\t\t\t");
+		for( j = 0; j < y; j++)
+			printf("%d ", allocation[i][j]);                    // Allocation Matrix
+		printf("\n");
+		}
+
+		process = -1;
+		for(i = 0; i < x; i++)
+		{
+			if(completed[i] == 0)                               //if not completed
+			{
+				process = i ;
+				for(j = 0; j < y; j++)
+				{
+					if(available[j] < need[i][j])               // checking if available resources are less than need.
+					{
+						process = -1;
+						break;
+					}
+				}
+			}
+			if(process != -1)
+			break;
+		}
+		if(process != -1)
+		{
+			printf("\nProcess %d runs to completion!", process + 1); 
+			SafeSequence[ct] = process + 1;
+			ct++;
+			for(j = 0; j < y; j++)
+			{
+				available[j] += allocation[process][j];
+				allocation[process][j] = 0;
+				maximum[process][j] = 0;
+				completed[process] = 1;
+			}
+		}
+	}while(ct != x && process != -1);
+
+	if(ct == x)
+	{
+		printf("\nThe system is in a safe state!!\n");
+		printf("Safe Sequence : < ");
+		for( i = 0; i < x; i++)
+			printf("%d ", SafeSequence[i]);
+		printf(">\n");
+	}
+	else 
+		printf("\nThe system is in an unsafe state!!");
+}
